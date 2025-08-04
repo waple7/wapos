@@ -1,0 +1,36 @@
+stages:
+  - build_push
+  - deploy
+  - test
+
+variables:
+  REGISTRY: registry.wapos.com:5055
+
+include:
+  - project: 'wapos/ci-templates'
+    ref: main
+    file: '/build_push.yml'
+  - project: 'wapos/ci-templates'
+    ref: main
+    file: '/test.yml'
+  - project: 'wapos/ci-templates'
+    ref: main
+    file: '/deploy.yml'
+
+build_push:
+  extends: .build_push_template
+  variables:
+    IMAGE_NAME: python-app
+
+test:
+  extends: .test_template
+  variables:
+    TEST_URL: "http://172.18.0.1:5000/"
+
+deploy:
+  extends: .deploy_template
+  variables:
+    DEPLOY_VERSION: "$CI_COMMIT_TAG"
+    APP_NAME: PYTHON_APP
+    IMAGE_NAME: python-app
+    APP_PORT: 5000

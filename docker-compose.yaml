@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  java-service:
+    build: ${JAVA_SERVICE_BUILD}
+    ports:
+      - "${JAVA_SERVICE_PORT}:8080"
+    restart: always
+
+  python-service:
+    build: ${PYTHON_SERVICE_BUILD}
+    ports:
+      - "${PYTHON_SERVICE_PORT}:5000"
+    restart: always
+
+  cadvisor:
+    image: ${CADVISOR_IMAGE}
+    ports:
+      - "${CADVISOR_PORT}:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: always
+
+  prometheus:
+    image: ${PROMETHEUS_IMAGE}
+    ports:
+      - "${PROMETHEUS_HOST_PORT}:9090"
+    volumes:
+      - ${PROMETHEUS_CONFIG}:/etc/prometheus/prometheus.yml
+    restart: always
